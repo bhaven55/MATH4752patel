@@ -1,28 +1,422 @@
 ---
-title: "lab6"
-output: html_document
+title: "lab6.Rmd"
+author: "Bhaven Patel"
+date: '`r format(Sys.Date(),format="%A, %B, %d, %Y")`'
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    fig_caption: true
+    highlights: pygments
+    number_sections: no
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+# Task 1
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+## set working directory
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+getwd()
 ```
 
-## Including Plots
+# Task 2
 
-You can also embed plots, for example:
+## layout() to construct 4 plots in a plotting region
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+layout(matrix(1:4, nr=2,nc=2))
+layout.show(4)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+
+## plot 4 normal curves with the paraments:
+
+$$
+\begin{eqnarray}
+\mu = 10 , \sigma = 4 \\
+\mu = 10 , \sigma = 2 \\
+\mu = 5 , \sigma = 10 \\
+\mu = 5 , \sigma = \frac{1}{2} 
+\end{eqnarray}
+$$
+
+```{r}
+layout(matrix(1:4, nr=2,nc=2))
+
+curve(dnorm(x, mean=10,sd=4),xlim=c(-2, 22))
+
+curve(dnorm(x, mean=10,sd=2),xlim=c(4,16))
+
+curve(dnorm(x, mean=5,sd=10),xlim=c(-25,35))
+
+curve(dnorm(x, mean=5,sd=.5),xlim=c(3,7))
+```
+
+## Plot the following regions and probabilities using one graphical interface per plot
+
+$$
+\begin{eqnarray}
+Y \sim N (0,1), P(Y \ge 2)
+\end{eqnarray}
+$$
+
+```{r}
+curve(dnorm(x, mean=0, sd=1), xlim=c(-3,3))
+
+xcurve=seq(2,5,length=1000)
+ycurve=dnorm(xcurve,mean=0,sd=1)
+
+polygon(c(2,xcurve,5),c(0,ycurve,0),col="Red")
+area = pnorm(5,mean=0,sd=1)-pnorm(2,mean=0,sd=1)
+area=round(area,4)
+
+text(x=2.15, y=0.025, paste("Area = ",area,sep=""))
+```
+
+$$
+\begin{eqnarray}
+Y \sim N (4,2), P(1 \le Y < 5)
+\end{eqnarray}
+$$
+```{r}
+curve(dnorm(x, mean=4, sd=2), xlim=c(-2,10))
+
+xcurve=seq(1,5,length=1000)
+ycurve=dnorm(xcurve,mean=4,sd=2)
+
+polygon(c(1,xcurve,5),c(0,ycurve,0),col="Red")
+area = pnorm(5,mean=4,sd=2)-pnorm(1,mean=4,sd=2)
+area=round(area,4)
+
+text(x=3, y=0.10, paste("Area = ",area,sep=""))
+```
+
+$$
+\begin{eqnarray}
+Y \sim N (10,4), P(Y < 10)
+\end{eqnarray}
+$$
+```{r}
+curve(dnorm(x, mean=10, sd=4), xlim=c(-2,22))
+
+xcurve=seq(-5,10,length=1000)
+ycurve=dnorm(xcurve,mean=10,sd=4)
+
+polygon(c(-5,xcurve,10),c(0,ycurve,0),col="Red")
+area = pnorm(10,mean=10,sd=4)-pnorm(-5,mean=10,sd=4)
+area=round(area,4)
+
+text(x=5, y=0.03, paste("Area = ",area,sep=""))
+```
+
+$$
+\begin{eqnarray}
+Y \sim N (-2,\frac{1}{2}), P(-3 < Y \le -2)
+\end{eqnarray}
+$$
+
+```{r}
+curve(dnorm(x, mean=-2, sd=0.5), xlim=c(-4,0))
+
+xcurve=seq(-3,-2,length=1000)
+ycurve=dnorm(xcurve,mean=-2,sd=0.5)
+
+polygon(c(-3,xcurve,-2),c(0,ycurve,0),col="Red")
+area = pnorm(-3,mean=-2,sd=0.5)-pnorm(-2,mean=-2,sd=0.5)
+area=round(area,4)
+
+text(x=-2.5, y=0.4, paste("Area = ",abs(area),sep=""))
+```
+
+# Task 3
+
+## Plot the following three plots on one plotting surface with overlay
+
+$$
+\begin{eqnarray}
+Y \sim Gamma (shape = 1, scale = 1) \\
+Y \sim Gamma (shape = 3, scale = 1) \\
+Y \sim Gamma (shape = 5, scale = 1) 
+\end{eqnarray}
+$$
+
+```{r}
+curve(dgamma(x,shape=1,scale=1),xlim=c(0,10),ylim=c(0,1),col="Maroon", lwd=2, ylab="Gamma Density", main="beta=1")
+text(x=1.2,y=0.8,paste("alpha=",1))
+
+curve(dgamma(x,shape=3,scale=1),xlim=c(0,10),ylim=c(0,1),col="Green", add=TRUE, lwd=2)
+text(x=2.3,y=0.35,paste("alpha=",3))
+
+curve(dgamma(x,shape=5,scale=1),xlim=c(0,10),ylim=c(0,1),col="Orange", add=TRUE, lwd=2)
+text(x=4.5,y=0.25,paste("alpha=",5))
+```
+
+$$
+\begin{eqnarray}
+Y \sim Gamma (shape = 3, scale = 2), P(2<Y<5)
+\end{eqnarray}
+$$
+
+```{r}
+curve(dgamma(x,shape=3,scale=2), xlim=c(0,10), ylim=c(0,0.3), col="Black", lwd=2, ylab="Gamma Density", xlab="Y", main="Gamma Distribution; Shpae = 3; Scale = 2")
+
+xgam1 = seq(2,5,length=1000)
+ygam1 = dgamma(xgam1, shape=3, scale=2)
+polygon(c(2,xgam1,5), c(0,ygam1,0), col="Dark Slate Gray 2")
+
+gprob1 = pgamma(5,shape=3,scale=2)-pgamma(2,shape=3,scale=2)
+gprob1=round(gprob1,4)
+text(x=3.2,y=0.17,paste("P(2<Y<5)=", gprob1, sep=""))
+```
+
+$$
+\begin{eqnarray}
+Y \sim Gamma (shape = 6, scale = 3), P(1\le Y\le4)
+\end{eqnarray}
+$$
+
+```{r}
+curve(dgamma(x,shape=6,scale=3), xlim=c(0,5), ylim=c(0,0.005), col="Black", lwd=2, ylab="Gamma Density", xlab="Y", main="Gamma Distribution; Shpae = 6; Scale = 3")
+
+xgam1 = seq(1,4,length=1000)
+ygam1 = dgamma(xgam1, shape=6, scale=3)
+polygon(c(1,xgam1,4), c(0,ygam1,0), col="Dark Slate Gray 2")
+
+gprob1 = pgamma(4,shape=6,scale=3)-pgamma(1,shape=6,scale=3)
+gprob1=round(gprob1,4)
+text(x=2,y=0.0037,paste("P(1 <= Y <= 4)=", gprob1, sep=""))
+```
+
+$$
+\begin{eqnarray}
+Y \sim Gamma (shape = 2, scale = 4), P(3\le Y<6)
+\end{eqnarray}
+$$
+```{r}
+curve(dgamma(x,shape=2,scale=4), xlim=c(0,8), ylim=c(0,0.15), col="Black", lwd=2, ylab="Gamma Density", xlab="Y", main="Gamma Distribution; Shpae = 2; Scale = 4")
+
+xgam1 = seq(3,6,length=1000)
+ygam1 = dgamma(xgam1, shape=2, scale=4)
+polygon(c(3,xgam1,6), c(0,ygam1,0), col="Dark Slate Gray 2")
+
+gprob1 = pgamma(6,shape=2,scale=4)-pgamma(3,shape=2,scale=4)
+gprob1=round(gprob1,4)
+text(x=4.5,y=0.05,paste("P(3 <= Y < 6)=", gprob1, sep=""))
+```
+
+# Task 4
+
+## use layout() and beak up the 4 graphical interface for chi-square distribution plot
+$$
+\begin{eqnarray}
+Y \sim chisq (df=1) \\
+Y \sim chisq (df=2) \\
+Y \sim chisq (df=4) \\
+Y \sim chisq (df=20) 
+\end{eqnarray}
+$$
+```{r}
+layout(matrix(1:4, nr=2,nc=2))
+
+curve(dchisq(x, df=1),xlim=c(0, 10), lwd=2, xlab="Y", ylab="Chi-Square Density", main="Degrees of Freedom: 1")
+
+curve(dchisq(x, df=2),xlim=c(0, 10), lwd=2, xlab="Y", ylab="Chi-Square Density", main="Degrees of Freedom: 1")
+
+curve(dchisq(x, df=4),xlim=c(0, 10), lwd=2, xlab="Y", ylab="Chi-Square Density", main="Degrees of Freedom: 1")
+
+curve(dchisq(x, df=20),xlim=c(0, 50), lwd=2, xlab="Y", ylab="Chi-Square Density", main="Degrees of Freedom: 1")
+```
+
+## Plot the following regions and probabilities in R on separate plotting surfaces
+$$
+\begin{eqnarray}
+Y \sim chisq (df=2), P(2 \le Y \le 4) \\
+Y \sim chisq (df=3), P(3 \le Y \le 5) \\
+Y \sim chisq (df=20), P(10 < Y \le 21) 
+\end{eqnarray}
+$$
+
+```{r}
+curve(dchisq(x,df=2), xlim=c(0,5), ylim=c(0,0.5), col="Black", lwd=2, ylab="Chi-square density", xlab="Y", main="Chi-Square Distribution; df=2")
+
+xchi = seq(2,4,length=1000)
+ychi = dchisq(xchi, df=2)
+polygon(c(2,xchi,4), c(0,ychi,0), col="Dark Slate Gray 2")
+
+cprob1 = pchisq(4,df=2)-pchisq(2,df=2)
+cprob1=round(cprob1,4)
+text(x=3,y=0.3,paste("P(2 <= Y <= 4)=", cprob1, sep=""))
+```
+
+```{r}
+curve(dchisq(x,df=3), xlim=c(0,10), ylim=c(0,0.5), col="Black", lwd=2, ylab="Chi-square density", xlab="Y", main="Chi-Square Distribution; df=3")
+
+xchi = seq(3,5,length=1000)
+ychi = dchisq(xchi, df=3)
+polygon(c(3,xchi,5), c(0,ychi,0), col="Dark Slate Gray 2")
+
+cprob1 = pchisq(5,df=3)-pchisq(3,df=3)
+cprob1=round(cprob1,4)
+text(x=3,y=0.3,paste("P(3 <= Y <= 5)=", cprob1, sep=""))
+```
+
+```{r}
+curve(dchisq(x,df=20), xlim=c(0,50), ylim=c(0,0.075), col="Black", lwd=2, ylab="Chi-square density", xlab="Y", main="Chi-Square Distribution; df=20")
+
+xchi = seq(10,21,length=1000)
+ychi = dchisq(xchi, df=20)
+polygon(c(10,xchi,21), c(0,ychi,0), col="Dark Slate Gray 2")
+
+cprob1 = pchisq(21,df=20)-pchisq(10,df=20)
+cprob1=round(cprob1,4)
+text(x=20,y=0.03,paste("P(10 < Y <= 21)=", cprob1, sep=""))
+```
+
+# Task 5
+
+## use layout() and plot 4 weibull plots with any shape and scale 
+
+$$
+\begin{eqnarray}
+Y \sim Weibull (shape = 3, scale = 1) \\
+Y \sim Weibull (shape = 3, scale = 2) \\
+Y \sim Weibull (shape = 5, scale = 1) \\
+Y \sim Weibull (shape = 5, scale = 2)
+\end{eqnarray}
+$$
+
+```{r}
+layout(matrix(1:4, nr=2,nc=2))
+curve(dweibull(x, shape=3, scale=1), xlim=c(0,5), lwd=2, xlab="Y", ylab="weibull density")
+curve(dweibull(x, shape=3, scale=2), xlim=c(0,5), lwd=2, xlab="Y", ylab="weibull density")
+curve(dweibull(x, shape=5, scale=1), xlim=c(0,5), lwd=2, xlab="Y", ylab="weibull density")
+curve(dweibull(x, shape=5, scale=2), xlim=c(0,5), lwd=2, xlab="Y", ylab="weibull density")
+```
+
+## Calculate any three areas and probabilites using weibull
+
+$$
+\begin{eqnarray}
+Y \sim Weibull (shape = 3, scale = 1), P(0 \le Y \le 1) \\
+Y \sim Weibull (shape = 3, scale = 2), P(0 \le Y \le 1) \\
+Y \sim Weibull (shape = 3, scale = 5), P(0 \le Y \le 3) 
+\end{eqnarray}
+$$
+
+```{r}
+curve(dweibull(x,shape=3,scale=1), xlim=c(0,5), col="Black", lwd=2, ylab="Weibull Density", xlab="Y", main="Weibull Distribution; Shape = 3; Scale = 1")
+
+xwei = seq(0,1,length=1000)
+ywei = dweibull(xwei, shape=3, scale=1)
+polygon(c(0,xwei,1), c(0,ywei,0), col="Dark Slate Gray 2")
+
+wprob1 = pweibull(1,shape=3,scale=1)-pweibull(0,shape=3,scale=1)
+wprob1=round(wprob1,4)
+text(x=2,y=0.5,paste("P(0 <= Y <= 1)=", wprob1, sep=""))
+```
+
+```{r}
+curve(dweibull(x,shape=3,scale=2), xlim=c(0,5), col="Black", lwd=2, ylab="Weibull Density", xlab="Y", main="Weibull Distribution; Shape = 3; Scale = 2")
+
+xwei = seq(0,1,length=1000)
+ywei = dweibull(xwei, shape=3, scale=2)
+polygon(c(0,xwei,1), c(0,ywei,0), col="Dark Slate Gray 2")
+
+wprob1 = pweibull(1,shape=3,scale=2)-pweibull(0,shape=3,scale=2)
+wprob1=round(wprob1,4)
+text(x=2,y=0.5,paste("P(0 <= Y <= 1)=", wprob1, sep=""))
+```
+
+```{r}
+curve(dweibull(x,shape=3,scale=5), xlim=c(0,5), col="Black", lwd=2, ylab="Weibull Density", xlab="Y", main="Weibull Distribution; Shape = 3; Scale = 5")
+
+xwei = seq(0,3,length=1000)
+ywei = dweibull(xwei, shape=3, scale=5)
+polygon(c(0,xwei,3), c(0,ywei,0), col="Dark Slate Gray 2")
+
+wprob1 = pweibull(3,shape=3,scale=5)-pweibull(0,shape=3,scale=5)
+wprob1=round(wprob1,4)
+text(x=2,y=0.10,paste("P(0 <= Y <= 3)=", wprob1, sep=""))
+```
+
+# Task 6
+
+## repeat task 5 but with beta distribution
+
+$$
+\begin{eqnarray}
+Y \sim Beta (\alpha = 2, \beta = 1) \\
+Y \sim Beta (\alpha = 2, \beta = 2) \\
+Y \sim Beta (\alpha = 4, \beta = 1) \\
+Y \sim Beta (\alpha = 4, \beta = 2) 
+\end{eqnarray}
+$$
+
+```{r}
+layout(matrix(1:4, nr=2,nc=2))
+curve(dbeta(x,2,1), lwd=2, xlim=c(0,2), xlab="Y", ylab="beta density")
+curve(dbeta(x,2,2), lwd=2, xlim=c(0,2), xlab="Y", ylab="beta density")
+curve(dbeta(x,4,1), lwd=2, xlim=c(0,2), xlab="Y", ylab="beta density")
+curve(dbeta(x,4,2), lwd=2, xlim=c(0,2), xlab="Y", ylab="beta density")
+```
+
+## beta distribution with P(0 <= Y <= 1)
+
+$$
+\begin{eqnarray}
+Y \sim Beta (\alpha = 2, \beta = 1), P(0 \le Y \le 1) \\
+Y \sim Beta (\alpha = 2, \beta = 2), P(0 \le Y \le 1) \\
+Y \sim Beta (\alpha = 4, \beta = 1), P(0 \le Y \le 1) 
+\end{eqnarray}
+$$
+
+```{r}
+curve(dbeta(x,2,1), xlim=c(0,5), col="Black", lwd=2, ylab="Beta Density", xlab="Y", main="Beta Distribution; Alpha = 2; Beta = 1")
+
+xbeta = seq(0,1,length=1000)
+ybeta = dbeta(xbeta,2,1)
+polygon(c(0,xbeta,1), c(0,ybeta,0), col="Dark Slate Gray 2")
+
+bprob1 = pbeta(1,2,1)-pbeta(0,2,1)
+bprob1=round(bprob1,4)
+text(x=3,y=1,paste("P(0 <= Y <= 1)=", bprob1, sep=""))
+```
+
+```{r}
+curve(dbeta(x,2,2), xlim=c(0,5), col="Black", lwd=2, ylab="Beta Density", xlab="Y", main="Beta Distribution; Alpha = 2; Beta = 2")
+
+xbeta = seq(0,1,length=1000)
+ybeta = dbeta(xbeta,2,2)
+polygon(c(0,xbeta,1), c(0,ybeta,0), col="Dark Slate Gray 2")
+
+bprob1 = pbeta(1,2,2)-pbeta(0,2,2)
+bprob1=round(bprob1,4)
+text(x=3,y=1,paste("P(0 <= Y <= 1)=", bprob1, sep=""))
+```
+
+```{r}
+curve(dbeta(x,4,1), xlim=c(0,5), col="Black", lwd=2, ylab="Beta Density", xlab="Y", main="Beta Distribution; Alpha = 4; Beta = 1")
+
+xbeta = seq(0,1,length=1000)
+ybeta = dbeta(xbeta,4,1)
+polygon(c(0,xbeta,1), c(0,ybeta,0), col="Dark Slate Gray 2")
+
+bprob1 = pbeta(1,4,1)-pbeta(0,4,1)
+bprob1=round(bprob1,4)
+text(x=3,y=1,paste("P(0 <= Y <= 1)=", bprob1, sep=""))
+```
+
+# Task 7
+
+## run function from package
+
+```{r}
+library(PATEL2021)
+PATEL2021::myncurve(mu=10,sigma=5,a=6)
+```
+

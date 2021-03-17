@@ -1,0 +1,234 @@
+---
+title: "Project 1"
+author: "Bhaven Patel"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: show
+    csl: biomed-central.csl
+    df_print: paged
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    number_sections: yes
+    theme: journal
+    toc: yes
+    toc_float: yes
+  word_document:
+    toc: yes
+    toc_depth: '4'
+  pdf_document:
+    df_print: kable
+    fig_caption: yes
+    fig_height: 6
+    fig_width: 7
+    highlight: tango
+    toc: yes
+    toc_depth: 4
+#bibliography: project.bib
+abstract: This project is all about analysing the SWDEFECTS file using R and probability theory. NASA used four different methods of detection to detected defects within software code. The methods were analyzed using accuracy, detection rate, false alarm rate, and precision rate. Lines of Code method seems to work the best.
+---
+
+<center>
+
+![Dr. Wayne Stewart](bhaven.png "My Picture"){ width=20% }
+
+</center>
+
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction to the data
+
+## Data and variables(see MS pg. 77,125)
+The SWDEFFECTS file contains a modules evaluated as true or false. When the code predicts a defect in the code, the corresponding value is yes. Otherwise, it's no. Engineers evaluate the defect prediction by using computing measures called accuracy, detection rate, false alarm rate, and precision. We want to assess the prediction of software defects in NASA Spacecraft Instrument Code.
+
+## TABLE SIA3.2
+
+The table contains module variables a,b,c, and d. Those will help us find the probability of accuracy, detection rate, false alarm rate, and precision  
+
+Algorithm Predicts Defects |False  | True
+------------- | ------------- | -------------
+No|a  | b
+Yes|c  | d
+
+### Make formulae to compute several probalility measure
+
+Using $\LaTeX$ construct the formulae for 
+
+1. Accuracy
+2. Detection rate
+3. False alarm rate
+4. Precision
+
+#### Accuracy - Probability of the Algorithm being correct
+$$
+\begin{eqnarray}
+Accuracy: P(Algorithm Is Correct) & = & \frac{(a+d)}{(a+b+c+d)}
+\end{eqnarray}
+$$
+
+#### Detection Rate - Probability of predict defect given module has defect
+$$
+\begin{eqnarray}
+detectionRate: (predictDefect|moduleHasDefect) & = & \frac{d}{(b+d)}
+\end{eqnarray}
+$$
+
+#### False Alarm Rate - Probability of predict defect given module has no defect
+$$
+\begin{eqnarray}
+falseAlarmRate: P(predictDefect|moduleHasNoDefect) & = & \frac{c}{(a+c)}
+\end{eqnarray}
+$$
+
+#### Precision - Probability of module defect given predict defect
+$$
+\begin{eqnarray}
+precision: P(moduleHasDefect|predictDefect) & = & \frac{d}{(c+d)}
+\end{eqnarray}
+$$
+
+# LaTex functions in R
+Putting functions in R to calculate various probabilities for each method.
+
+## Accuracy Function
+```{r accuracy}
+acc=function(a,b,c,d)
+{
+  topSum <- a+d
+  bottomSum <- a+b+c+d
+  divided <- topSum/bottomSum
+  divided
+}
+```
+
+## Detection Rate Function
+```{r detecton}
+detect=function(b,d)
+{
+  topSum <- d
+  bottomSum <- b+d
+  divided <- topSum/bottomSum
+  divided
+}
+```
+
+## False Alarm Rate Function
+```{r alarm}
+falarm=function(a,c)
+{
+  topSum <- c
+  bottomSum <- a+c
+  divided <- topSum/bottomSum
+  divided
+}
+```
+
+## Precision Function
+```{r precision}
+prec=function(c,d)
+{
+  topSum <- d
+  bottomSum <- c+d
+  divided <- topSum/bottomSum
+  divided
+}
+```
+
+
+# Create the tables in Figure SIA3.1
+
+SPSS two-way summary tables below will help give accuracy, detection, false alarm, and precision rate for all 4 methods we are using. The numbers present a,b,c, and d variables. We will use those variables in functions we have created above.
+
+```{r }
+# predict.loc*defect crosstabulation
+swd=read.csv("swdefects.csv")
+head(swd)
+
+tab=with(swd, table(predict.loc.50,defect))
+tab = addmargins(tab)
+tab
+barplot(tab, beside=TRUE, leg=TRUE, main="LOC")
+
+# predict.vg*defect crosstabulation
+tab2=with(swd, table(predict.vg.10,defect))
+tab2=addmargins(tab2)
+tab2
+barplot(tab2, beside=TRUE, leg=TRUE, main="VG")
+
+# predict.evg*defect crosstabulation
+tab3=with(swd, table(predict.evg.14.5,defect))
+tab3=addmargins(tab3)
+tab3
+barplot(tab3, beside=TRUE, leg=TRUE, main="EVG")
+
+# predict.ivg*defect crosstabulation
+tab4=with(swd, table(predict.ivg.9.2,defect))
+tab4=addmargins(tab4)
+tab4
+barplot(tab4, beside=TRUE, leg=TRUE, main="IVG")
+
+```
+
+
+
+
+
+# TABLE SIA3.3
+
+Now create a function `mybar()`that will have as its input variables. Also, create a table and name it 'tab5'. First we will find the accruacy, detection, false alarm, and precision rate. We will use data and it put in a matrix to yield us a table. We have to make sure the numbers being displayed are rounded to 4 decimal places.
+
+>
+    1. tab ( this will be a n by m table) - like `tab3`
+    2. dec ( accuracy of the decimal output ) -- like `dec=4` for example would mean 4 decimal places (use `round()`)
+    
+```{r}
+LOC_accuracy = acc(400,29,49,20)
+LOC_detectionRate = detect(29,20)
+LOC_falseAlarmRate = falarm(400,49)
+LOC_precision = prec(49,20)
+
+CC_accuracy = acc(397,35,52,14)
+CC_detectionRate = detect(35,14)
+CC_falseAlarmRate = falarm(397,52)
+CC_precision = prec(52,14)
+
+EC_accuracy = acc(441,47,8,2)
+EC_dectectionRate = detect(47,2)
+EC_falseAlarmRate = falarm(441,8)
+EC_precision = prec(8,2)
+
+DC_accuracy = acc(422,38,27,11)
+DC_detectionRate = detect(38,11)
+DC_falseAlarmRate = falarm(422,27)
+DC_precision = prec(27,11)
+
+tab5 = matrix(c(LOC_accuracy, CC_accuracy, EC_accuracy, DC_accuracy, LOC_detectionRate, CC_detectionRate, EC_dectectionRate, DC_detectionRate, LOC_falseAlarmRate, CC_falseAlarmRate, EC_falseAlarmRate, DC_falseAlarmRate, LOC_precision, CC_precision, EC_precision, DC_precision), ncol=4, byrow=FALSE)
+rownames(tab5)=(c("Lines of code", "Cycloclamatic complexity", "Essential complexity", "Design complexity"))
+colnames(tab5)=(c("Accuracy", "Detection Rate", "False Alarm Rate", "Precision"))
+tab5=as.table(tab5)
+round(tab5, 4)
+```
+    
+
+    
+mybar() function will create a barplot using the table created for SIA3.3. It will also create a list that contains the table. The bar plot will represent the accuracy, detection, false alarm, and precision rate for each method.
+
+>
+    1. A barplot of the table
+    2. Commandline output in the form of a list containing the table
+
+```{r}
+mybar = function(tab,dec)
+{
+  barplot(tab, beside=TRUE, leg= TRUE, col=rainbow(4))
+  listTable = list(round(tab,dec))
+  return(listTable)
+}
+mybar(tab=tab5,dec=4)
+```
